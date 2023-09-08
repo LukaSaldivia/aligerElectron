@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script async="false" src="../../public/js/edit-empresa.js"></script>
+    <link rel="stylesheet" href="../../public/css/style.css">
+    <link rel="stylesheet" href="../../public/css/new-empresa.css">
+</head>
+<body>
+    <form id="editar-empresa" enctype="multipart/form-data">
+        <input type="text" hidden name="id" id="id">
+        <div class="row">
+            <label for="nombre">Nombre</label>
+            <input pattern="\S(.*\S)?" type="text" name="nombre" id="nombre" required>
+        </div>
+
+        <div class="row">
+            <label for="imagen">Imagen</label>
+            <input type="file" name="imagen" id="imagen" accept="image/*" onchange="loadFile(event)">
+            <img id="imgMuestra" src="../public/images/aliger.png" alt="Logo">
+        </div>
+
+        <div class="row">
+            <label for="color">Color</label>
+            <input type="color" name="color" id="color">
+
+        </div>
+
+        <div class="row">
+            <input type="submit" value="Cargar empresa">
+        </div>
+    </form>
+</body>
+</html>

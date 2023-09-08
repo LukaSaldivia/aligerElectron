@@ -1,0 +1,86 @@
+body{
+    display: grid;
+    place-items: center;
+}
+
+#table-container{
+    display: grid;
+    place-items: center;
+
+    height: 500px;
+
+    overflow:hidden;
+    position: relative;
+    overflow-y: scroll;
+}
+
+table{
+    border-collapse: collapse; 
+    max-width: fit-content;
+    border: 1px solid #225;
+}
+
+table tr:has(th){
+    background-color: #225;
+    color: #99f;
+    font-weight: 100;
+    position: sticky;
+    top: -1px;
+}
+
+
+table tr :is(td,th){
+    border: 1px solid #225;
+    padding: .5rem 1rem;
+}
+
+table td:has(img){
+    padding: 0;
+    display: grid;
+    place-items: center;
+}
+
+
+table img{
+    width: 70px;
+    object-fit: contain;
+    aspect-ratio: 1/1;
+}
+
+table img.producto{
+    object-fit: cover;
+}
+
+table td button{
+    background-color: var(--own);
+    color: white;
+    text-decoration: none;
+    padding: .3rem .5rem;
+    border-style: none;
+    border-radius: 5px;
+}
+table td button:hover{
+    filter: brightness(120%);
+    cursor: pointer;
+}
+
+#search-container{
+    display: grid;
+    justify-items: stretch;
+    width: 100%;
+    padding: 1rem;
+}
+
+#search{
+    padding: .8rem .8rem;
+    padding-left: calc( .8rem + 24px);
+
+    background-image: url('../images/lupa.png');
+    background-repeat: no-repeat;
+    background-position: 8px;
+    background-size: 24px;
+
+    border-style: none;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+}

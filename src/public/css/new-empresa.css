@@ -1,0 +1,6 @@
+@import url(new-product.css);
+
+form img{
+    width: 120px;
+    aspect-ratio: unset;
+}

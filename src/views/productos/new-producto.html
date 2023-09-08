@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="../../public/js/new-product.js"></script>
+    <link rel="stylesheet" href="../../public/css/style.css">
+    <link rel="stylesheet" href="../../public/css/new-product.css">
+</head>
+<body>
+<form id="nuevo-producto" enctype="multipart/form-data">
+    <div class="row">
+        <label for="nombre">Nombre</label>
+        <input pattern="\S(.*\S)?" type="text" name="nombre" id="nombre" required>
+    </div>
+    <div class="row">
+        <label for="empresa">Empresa</label>
+        <select name="empresa" id="empresa">
+
+        </select>
+
+    </div>
+    <div class="row">
+        <label for="precio">Precio</label>
+        <input type="number" name="precio" id="precio" required>
+    </div>
+    <div class="row">
+        <label for="venta">Venta</label>
+        <select name="venta" id="venta"></select>
+    </div>
+    <div class="row">
+        <label for="categoria">Categoria</label>
+        <select name="categoria" id="categoria"></select>
+    </div>
+    <div class="row">
+        <label for="imagen">Imagen</label>
+        <input type="file" name="imagen" id="imagen" accept="image/*" onchange="loadFile(event)">
+        <img id="imgMuestra" src="../../public/images/aliger.png" alt="Producto">
+    </div>
+
+    <div class="row">
+        <input id="submit" type="submit" value="Cargar producto">
+    </div>
+</form>
+</body>
+</html>

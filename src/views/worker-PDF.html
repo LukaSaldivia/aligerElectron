@@ -1,0 +1,62 @@
+<head> 
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/index.css">
+    <link rel="stylesheet" href="../public/css/pdfWorker.css">
+
+
+</head>
+<body>
+    <style>
+        body{
+            padding: 2rem;
+        }
+    </style>
+    <script>
+        const {ipcRenderer} = require("electron");
+
+        function cargarTodasLasImagenes(imagenes) {
+    return new Promise(function(resolve, reject) {
+        var totalImagenes = imagenes.length;
+        var imagenesCargadas = 0;
+
+        for (var i = 0; i < totalImagenes; i++) {
+            var imagen = new Image();
+            imagen.src = imagenes[i].src;
+
+            imagen.onload = function() {
+                imagenesCargadas++;
+                if (imagenesCargadas === totalImagenes) {
+                    resolve();
+                }
+            };
+
+            imagen.onerror = function() {
+                reject("Error al cargar una o más imágenes.");
+            };
+        }
+    });
+}
+
+
+
+ipcRenderer.on("worker:printPDF", (event, content) => {
+
+    document.body.innerHTML = content
+    
+    var imagenes = document.querySelectorAll('img');
+
+    cargarTodasLasImagenes(imagenes)
+    .then(function() {
+        ipcRenderer.send("worker:ready");
+        // Aquí puedes poner el código que deseas ejecutar después de que todas las imágenes se hayan cargado
+    })
+    .catch(function(error) {
+        console.error(error);
+    });
+
+});
+
+    </script>
+
+
+</body>

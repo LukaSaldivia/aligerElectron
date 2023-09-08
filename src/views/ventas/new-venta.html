@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script defer src="../../public/js/new-venta.js"></script>
+    <link rel="stylesheet" href="../../public/css/style.css">
+    <link rel="stylesheet" href="../../public/css/new-empresa.css">
+</head>
+<body>
+    <form id="nueva-venta" enctype="multipart/form-data">
+        <div class="row">
+            <label for="nombre">Nombre</label>
+            <input pattern="\S(.*\S)?" type="text" name="nombre" id="nombre" required>
+        </div>
+
+
+
+        <div class="row">
+            <input type="submit" value="Cargar tipo de venta">
+        </div>
+    </form>
+</body>
+</html>

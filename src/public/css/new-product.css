@@ -1,0 +1,38 @@
+form{
+
+    display: grid;
+    gap: .5rem;
+    padding: .5rem;
+
+
+}
+
+form div.row{
+    display: grid;
+}
+
+form div.row label{
+    color: #229;
+}
+
+form div.row :is(input,select){
+    padding: .5rem;
+}
+
+
+form img{
+    width: 120px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+input[type = "submit"]{
+    background-color: #225;
+    border-style: none;
+    color: white;
+    padding: .8rem 8rem;
+}
+
+input[type = "submit"]:disabled{
+    opacity: .6;
+}
