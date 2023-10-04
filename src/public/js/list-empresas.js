@@ -1,22 +1,16 @@
 const {ipcRenderer} = require('electron')
 
-const path = require('path')
-const fs = require('fs');
+ipcRenderer.invoke('requestData').then((data) =>{
+    if (data) {
+        let {empresa} = data
+
+        const input = document.querySelector('#search')
+        const resultadosP = document.querySelector('#resultados')
+
+        input.addEventListener('input',()=>{busqueda(resultadosP,input)})
 
 
-
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
-
-let {empresa} = datos
-
-const input = document.querySelector('#search')
-const resultadosP = document.querySelector('#resultados')
-
-input.addEventListener('input',busqueda)
-document.addEventListener('DOMContentLoaded',()=>{
-
-
-    Object.keys(empresa).forEach(id=>{
+        Object.keys(empresa).forEach(id=>{
         document.querySelector('table').innerHTML += `
         
         <tr>
@@ -57,18 +51,31 @@ document.addEventListener('DOMContentLoaded',()=>{
         })
     })
 
-    busqueda()
+    busqueda(resultadosP,input)
+
+
+
+
+
+
+
+    }else{
+        alert('No hay data.json')
+    }
 })
 
-function busqueda() {
+
+function busqueda(resultadosElement,inputElement) {
     let resultados = 0
     document.querySelectorAll('tr:not(:has(th))').forEach(tr=>{
-        if (Object.values(tr.children).some(td => td.innerText.toLowerCase().includes(input.value.toLowerCase()))) {
+        if (Object.values(tr.children).some(td => td.innerText.toLowerCase().includes(inputElement.value.toLowerCase()))) {
             tr.style.display = 'table-row'
             resultados++
         }else{
             tr.style.display = 'none'
         }
     })
-    resultadosP.innerHTML = `Resultados totales: ${resultados}`;
+    resultadosElement.innerHTML = `Resultados totales: ${resultados}`;
 }
+
+

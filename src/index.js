@@ -1,21 +1,3 @@
-const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron')
-const url = require('url')
-const path = require('path')
-const fs = require('fs');
-const os = require('os')
-
-
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'data.json'),'utf-8'))
-
-let { productos , venta , categoria , empresa} = datos
-
-
-if (process.env.NODE_ENV !== 'production') {
-    require('electron-reload')(__dirname,{
-        electron : path.join(__dirname,'../node_modules','.bin','electron')
-    })
-}
-
 // Products
 let index, newProductWindow, listProductsWindow, editProductWindow
 
@@ -31,6 +13,47 @@ let newCategoriaWindow, listCategoriasWindow, editCategoriaWindow
 // Venta
 let newVentaWindow, listVentasWindow, editVentaWindow
 
+// JSON
+let importarJSON
+
+const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron')
+const url = require('url')
+const path = require('path')
+const fs = require('fs');
+const os = require('os')
+
+const datosPath = path.join(app.getPath('userData'),'data.json')
+
+const datosIniciales = `
+{
+    "productos": [
+    ],
+    "venta": {
+    },
+    "categoria": {
+    },
+    "empresa": {
+    }
+}
+`
+
+
+
+
+let datos = readData()
+
+if (datos === null) {
+    saveData(datosIniciales)
+}
+
+// if (process.env.NODE_ENV !== 'production') {
+    // require('electron-reload')(__dirname,{
+    //     electron : path.join(__dirname,'../node_modules','.bin','electron')
+    // })
+// }
+
+
+
 
 
 app.on('ready' ,() =>{
@@ -41,8 +64,7 @@ app.on('ready' ,() =>{
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
-        } ,
-        minimizable : false
+        }    
     })
 
     index.maximize()
@@ -90,7 +112,7 @@ const templateMenu = [
                         accelerator : process.platform == 'darwin' ? 'command+N' : 'Ctrl+N',
                         click(){
         
-                            createWindow(newProductWindow,{
+                            newProductWindow = createWindow(newProductWindow,{
                                 show : true,
                                 width : 600,
                                 height : 700,
@@ -109,7 +131,7 @@ const templateMenu = [
                         click(){
 
 
-                            createWindow(listProductsWindow,{
+                            listProductsWindow = createWindow(listProductsWindow,{
                                 max : true,
                                 show : false,
                                 width : 1,
@@ -130,7 +152,7 @@ const templateMenu = [
                     {
                         label : "Nueva empresa",
                         click(){
-                            createWindow(newEmpresaWindow,{
+                            newEmpresaWindow = createWindow(newEmpresaWindow,{
                                 fileName : 'empresas/new-empresa.html',
                                 width : 600,
                                 height : 700,
@@ -146,7 +168,7 @@ const templateMenu = [
                         click(){
 
 
-                            createWindow(listEmpresasWindow,{
+                            listEmpresasWindow = createWindow(listEmpresasWindow,{
                                 max : true,
                                 show : false,
                                 width : 1,
@@ -162,53 +184,13 @@ const templateMenu = [
                 ]
             },
             {
-                label : "Tipo de ventas",
-                submenu : [
-                    {
-                        label : "Nuevo tipo de venta",
-                        click(){
-        
-                            createWindow(newVentaWindow,{
-                                show : true,
-                                width : 600,
-                                height : 700,
-                                title : 'Insertar tipo de venta',
-                                setMenu : false,
-                                fileName : 'ventas/new-venta.html',
-                                max : false
-                            })
-        
-                        }
-
-                    },
-                    {
-                        label : "Lista de tipo de ventas",
-                        click(){
-
-
-                            createWindow(listVentasWindow,{
-                                max : true,
-                                show : false,
-                                width : 1,
-                                height : 1,
-                                fileName : 'ventas/list-ventas.html',
-                                setMenu : true,
-                                title : 'Lista de tipos de ventas'
-                            })
-                            
-                        }   
-                    }
-
-                ]
-            },
-            {
                 label : "Categorías",
                 submenu : [
                     {
                         label : "Nueva categoría",
                         click(){
         
-                            createWindow(newCategoriaWindow,{
+                            newCategoriaWindow = createWindow(newCategoriaWindow,{
                                 show : true,
                                 width : 600,
                                 height : 700,
@@ -226,7 +208,7 @@ const templateMenu = [
                         click(){
 
 
-                            createWindow(listCategoriasWindow,{
+                            listCategoriasWindow = createWindow(listCategoriasWindow,{
                                 max : true,
                                 show : false,
                                 width : 1,
@@ -240,6 +222,72 @@ const templateMenu = [
                     }
 
                 ]
+            },
+            {
+                label : "Tipo de ventas",
+                submenu : [
+                    {
+                        label : "Nuevo tipo de venta",
+                        click(){
+        
+                            newVentaWindow = createWindow(newVentaWindow,{
+                                show : true,
+                                width : 600,
+                                height : 700,
+                                title : 'Insertar tipo de venta',
+                                setMenu : false,
+                                fileName : 'ventas/new-venta.html',
+                                max : false
+                            })
+        
+                        }
+
+                    },
+                    {
+                        label : "Lista de tipo de ventas",
+                        click(){
+
+
+                            listVentasWindow = createWindow(listVentasWindow,{
+                                max : true,
+                                show : false,
+                                width : 1,
+                                height : 1,
+                                fileName : 'ventas/list-ventas.html',
+                                setMenu : true,
+                                title : 'Lista de tipos de ventas'
+                            })
+                            
+                        }   
+                    }
+
+                ]
+            }
+            
+        ]
+    },
+    {
+        label : "Base de datos",
+        submenu : [
+            {
+                label : 'Insertar base de datos',
+                click(){
+                    importarJSON = createWindow(importarJSON,{
+                        fileName : 'import-json.html',
+                        height : 1,
+                        width : 1,
+                        show : false,
+                        max : true,
+                        setMenu : true,
+                        title : 'Importar base de datos'
+                    })
+                }
+            },
+            {
+                label : 'Extraer base de datos',
+                click(){
+                    saveData(JSON.stringify(readData()),path.join(app.getPath('desktop'),'data.json'))
+                }
             }
         ]
     }
@@ -260,6 +308,7 @@ const templateMenu = [
             webPreferences: {
                 nodeIntegration: true,
                 contextIsolation: false,
+                enableRemoteModule: true
             } })
             
             
@@ -286,10 +335,11 @@ function createEditEmpresaWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            enableRemoteModule: true
         } })
         
         
-        // editEmpresaWindow.setMenu(null)
+        editEmpresaWindow.setMenu(null)
         
         editEmpresaWindow.loadURL(url.format({
             pathname : path.join(__dirname,'views/empresas/edit-empresa.html'),
@@ -312,6 +362,7 @@ function createEditCategoriaWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            enableRemoteModule: true
         } })
         
         
@@ -339,6 +390,7 @@ function createEditVentaWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            enableRemoteModule: true
         } })
         
         
@@ -378,6 +430,7 @@ function createWindow(global, attr = {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            enableRemoteModule: true
         }
 
     })
@@ -400,6 +453,8 @@ function createWindow(global, attr = {
     global.on('closed', ()=>{
         global = null
     })
+
+    return global
 }
 //  --------------------------------------------------------------------------------
 
@@ -410,26 +465,6 @@ if (process.platform === 'darwin') {
         label : app.getName()
     })
 }
-
-
-if (process.env.NODE_ENV !== 'production') {
-    templateMenu.push({
-        label : 'DevTool',
-        submenu : [
-            {
-            label : 'Show/Hide',
-            accelerator : 'Ctrl+Shift+I',
-            click(item, focusedWindow){
-                focusedWindow.toggleDevTools();
-            }
-        },
-        {
-            role : 'reload'
-        }
-    ]
-    })
-}
-
 
 // Data-transfers handler
 
@@ -488,8 +523,7 @@ ipcMain.on('edited',(e,res)=>{
 
 
 ipcMain.on('delete',(e,res)=>{
-    let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'data.json'),'utf-8'))
-    let { productos , empresa , venta , categoria } = datos
+    let { productos , empresa , venta , categoria } = readData()
 
     const cases = {
         'producto' : ()=>{
@@ -525,9 +559,8 @@ ipcMain.on('delete',(e,res)=>{
     }
 
     cases[res.type]()
-
     const json_datos = JSON.stringify(datos)
-    fs.writeFileSync(path.join(__dirname,'data.json'), json_datos, 'utf-8')
+    saveData(json_datos)
 
 
 })
@@ -536,7 +569,7 @@ ipcMain.on("worker:printPDF", (event, content) => {
     workerPDFWindow.webContents.send("worker:printPDF", content);
 });
 ipcMain.on("worker:ready", (event,content) => {
-    const pdfPath = path.join(__dirname, 'ALIGER_CATALOGO.pdf');
+    const pdfPath = path.join(app.getPath('desktop'), 'ALIGER_CATALOGO.pdf');
     workerPDFWindow.webContents.printToPDF({
         printBackground: true,
         margins : {
@@ -546,7 +579,9 @@ ipcMain.on("worker:ready", (event,content) => {
             right : 0
         }
     }).then((data) => {
-        fs.writeFile(pdfPath, data,function (error) {
+        fs.writeFile(pdfPath, data,function (error)
+         
+        {
             if (error) {
                 throw error
             }
@@ -557,3 +592,71 @@ ipcMain.on("worker:ready", (event,content) => {
        throw error;
     })
 });
+
+ipcMain.on('saveData',(e,res)=>{
+    saveData(res)
+}
+)
+
+ipcMain.on('importedJSON',()=>{
+    importarJSON.close()
+})
+
+
+ipcMain.handle('requestData',async (e) =>{
+    try {
+        return readData()
+    } catch (err) {
+        return null
+    }
+})
+
+
+function saveData(json, newPath) {
+    
+    fs.writeFileSync(newPath ? newPath : datosPath, json, 'utf-8')
+    let windows = [index, listProductsWindow, editProductWindow, newProductWindow,
+                workerPDFWindow,
+                listEmpresasWindow, editEmpresaWindow, newEmpresaWindow,
+                listCategoriasWindow, editCategoriaWindow, newCategoriaWindow,
+                listVentasWindow, editVentaWindow, newVentaWindow]
+
+    windows.forEach(window=>{
+        try {
+            window.reload()
+            
+        } catch (error) {
+            
+        }
+    })
+
+}
+
+function readData() {
+
+        try {
+            const data = fs.readFileSync(datosPath, 'utf-8');
+            return JSON.parse(data);
+        } catch (error) {
+            return null
+        }
+    
+}
+
+
+
+// templateMenu.push({
+//     label : 'DevTool',
+//     submenu : [
+//         {
+//         label : 'Show/Hide',
+//         accelerator : 'Ctrl+Shift+I',
+//         click(item, focusedWindow){
+//             focusedWindow.toggleDevTools();
+//         }
+//     },
+//     {
+//         role : 'reload'
+//     }
+// ]
+// })

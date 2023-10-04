@@ -1,25 +1,25 @@
-const { ipcRenderer} = require('electron')
-const path = require('path')
-const fs = require('fs');
+const { ipcRenderer } = require('electron')
 
 let idCategoria
 
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
     
-let {categoria} = datos
 
 ipcRenderer.on('requestEdit',(e,id)=>{
 
     idCategoria = id;
 
-    document.querySelector('#id').value = idCategoria
-    document.querySelector('#nombre').value = categoria[idCategoria].nombre
 
 })
 
+ipcRenderer.invoke('requestData').then((data)=>{
+    if (data) {
 
+    let {categoria} = data
 
+    document.querySelector('#id').value = idCategoria
+    document.querySelector('#nombre').value = categoria[idCategoria].nombre
 
+    
 const form = document.querySelector('#editar-categoria')
 form.addEventListener('submit',(e)=>{
 
@@ -35,10 +35,10 @@ form.addEventListener('submit',(e)=>{
 
 
 
-        datos["categoria"] = categoria
+        data["categoria"] = categoria
 
-        const json_datos = JSON.stringify(datos)
-        fs.writeFileSync(path.join(__dirname,'../../data.json'), json_datos, 'utf-8')
+        const json_datos = JSON.stringify(data)
+        ipcRenderer.send('saveData',json_datos)
 
         ipcRenderer.send('edited',{
             type : 'categoria'
@@ -51,3 +51,13 @@ form.addEventListener('submit',(e)=>{
 
 
 })
+
+
+    }else{
+        alert('No hay data.json')
+    }
+})
+
+
+
+

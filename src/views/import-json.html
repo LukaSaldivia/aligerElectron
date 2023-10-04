@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../public/css/new-product.css">
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/index.css">
+</head>
+<body>
+    <header id="main-header">
+        <img id="logo" src="../public/images/aliger.png" alt="logo"> 
+        Aliger, Logística y Distribución
+</header>
+
+  <form id="json-form">
+    <div class="row">
+      <label for="">Archivo JSON</label>
+      <input type="file" name="json" id="json" required>
+    </div>
+
+    <div class="row"><input type="submit" value="Cargar JSON" accept="application/JSON"></div>
+  </form>
+
+  <script>
+
+    const { ipcRenderer } = require('electron')
+    const fs = require('fs')
+
+    const form = document.querySelector('#json-form')
+
+    form.addEventListener('submit',(e)=>{
+      e.preventDefault()
+      const formData = new FormData(form)
+      const data = fs.readFileSync(formData.get('json').path,'utf-8')
+      ipcRenderer.send('saveData',data)
+      ipcRenderer.send('importedJSON')
+    })
+
+  </script>
+</body>
+</html>

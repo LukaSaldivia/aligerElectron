@@ -1,21 +1,25 @@
-const { ipcRenderer} = require('electron')
-const path = require('path')
-const fs = require('fs');
+const { ipcRenderer } = require('electron')
+
 
 let idVenta
-
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
-    
-let {venta} = datos
 
 ipcRenderer.on('requestEdit',(e,id)=>{
 
     idVenta = id;
 
     document.querySelector('#id').value = idVenta
-    document.querySelector('#nombre').value = venta[idVenta].nombre
-
+    
 })
+
+ipcRenderer.invoke('requestData').then((data)=>{
+    if (data) {
+        
+        
+        
+        let {venta} = data
+        
+        document.querySelector('#nombre').value = venta[idVenta].nombre
+
 
 
 
@@ -35,10 +39,10 @@ form.addEventListener('submit',(e)=>{
 
 
 
-        datos["venta"] = venta
+        data["venta"] = venta
 
-        const json_datos = JSON.stringify(datos)
-        fs.writeFileSync(path.join(__dirname,'../../data.json'), json_datos, 'utf-8')
+        const json_datos = JSON.stringify(data)
+        ipcRenderer.send('saveData',json_datos)
 
         ipcRenderer.send('edited',{
             type : 'venta'
@@ -51,3 +55,10 @@ form.addEventListener('submit',(e)=>{
 
 
 })
+
+    }else{
+        alert('No hay data.json')
+    }
+})
+
+

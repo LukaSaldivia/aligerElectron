@@ -1,13 +1,12 @@
-const path = require('path')
-const fs = require('fs');
+const { ipcRenderer } = require('electron')
 
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
-
-let {categoria} = datos
-
+ipcRenderer.invoke('requestData').then((data)=>{
+    if (data) {
+        let {categoria} = data
 
 
-const idNuevaCategoria = Math.max(...Object.keys(categoria).map(num => Number(num))) + 1 >= 0 ? Math.max(...Object.keys(categoria).map(num => Number(num))) + 1 : 0 
+
+const idNuevaCategoria = Math.max(...Object.keys(categoria).map(num => Number(num))) + 1 > 0 ? Math.max(...Object.keys(categoria).map(num => Number(num))) + 1 : 0 
 
 
 const form = document.querySelector('#nueva-categoria')
@@ -24,11 +23,18 @@ form.addEventListener('submit',(e)=>{
 
 
 
-        datos["categoria"] = categoria
+        data["categoria"] = categoria
 
-        const json_datos = JSON.stringify(datos)
-        fs.writeFileSync(path.join(__dirname,'../../data.json'), json_datos, 'utf-8')
+        const json_datos = JSON.stringify(data)
+        ipcRenderer.send('saveData',json_datos)
     
 
 
 })
+
+    }else{
+        alert('No hay data.json')
+    }
+})
+
+

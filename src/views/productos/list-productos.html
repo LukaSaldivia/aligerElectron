@@ -3,29 +3,24 @@
 <head>
     <link rel="stylesheet" href="../../public/css/style.css">
     <link rel="stylesheet" href="../../public/css/list.css">
+    <script defer src="../../public/js/modules/pagination.js"></script>
     <script defer src="../../public/js/list-products.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <div id="search-container">
-        <input type="text" id="search" placeholder="Buscar por nombre, empresa, precio...">
+    <form id="search-container">
+        <input type="text" id="search" name="search" placeholder="Buscar por nombre, empresa, precio...">
         <p id="resultados"></p>
-    </div>
+    </form>
 
     <div id="table-container">
     <table>
 
-        <tr>
-            <th>Producto</th>
-            <th>Precio</th>
-            <th>Empresa</th>
-            <th>Categoria</th>
-            <th>Venta</th>
-            <th>Imagen</th>
-            <th>Acciones</th>
-        </tr>
+
     </table>
+
 </div>
+<nav id="pages"></nav>
 </body>
 </html>

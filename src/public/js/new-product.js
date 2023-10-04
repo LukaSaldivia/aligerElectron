@@ -1,25 +1,15 @@
+const { ipcRenderer } = require('electron')
 const { v4: uuidv4 } = require('uuid');
-const {ipcRenderer} = require('electron')
-const path = require('path')
-const fs = require('fs');
 
 
-
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
-
-let {productos} = datos
+ipcRenderer.invoke('requestData').then((data)=>{
+    if (data) {
+        let {productos} = data
 
 let prod = {}
 
 
-function loadFile(event) {
-    var image = document.getElementById("imgMuestra");
-    image.src = URL.createObjectURL(event.target.files[0]);
-    image.onload = function() {
-        URL.revokeObjectURL(image.src)
-    }
 
-};
 
 
 
@@ -34,7 +24,6 @@ form.addEventListener('submit',(e)=>{
     const reader = new FileReader()
 
     reader.onloadend = () =>{
-        console.log();
         formData.delete('imagen')
         formData.append('imagen',reader.result[reader.result.length-1] == ',' ? false : reader.result)
         prod = {
@@ -48,11 +37,11 @@ form.addEventListener('submit',(e)=>{
 
         }
         productos.push(prod)
-        datos["productos"] = productos
+        data["productos"] = productos
 
-        const json_datos = JSON.stringify(datos)
-        fs.writeFileSync(path.join(__dirname,'../../data.json'), json_datos, 'utf-8')
-    
+        const json_datos = JSON.stringify(data)
+        
+        ipcRenderer.send('saveData',json_datos)
     }
 
     reader.readAsDataURL(formData.get('imagen'))
@@ -63,11 +52,10 @@ form.addEventListener('submit',(e)=>{
 
 })
 
-document.addEventListener('DOMContentLoaded',()=>{
     document.querySelectorAll('select').forEach(select => {
-        for (const key in datos[select.id]) {
+        for (const key in data[select.id]) {
             select.innerHTML += `
-            <option value="${key}">${datos[select.id][key].nombre}</option>
+            <option value="${key}">${data[select.id][key].nombre}</option>
             `
         }
         if (select.querySelectorAll('option').length <= 0) {
@@ -76,4 +64,19 @@ document.addEventListener('DOMContentLoaded',()=>{
     })
 
 
+    }else{
+        alert('No hay data.json')
+    }
 })
+
+
+
+
+function loadFile(event) {
+    var image = document.getElementById("imgMuestra");
+    image.src = URL.createObjectURL(event.target.files[0]);
+    image.onload = function() {
+        URL.revokeObjectURL(image.src)
+    }
+
+};

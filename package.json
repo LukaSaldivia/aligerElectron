@@ -1,17 +1,39 @@
 {
-  "name": "aligerpdfelectron",
+  "name": "aliger",
   "version": "1.0.0",
-  "description": "",
+  "description": "Programa de gestión y generación de PDF",
   "main": "src/index.js",
   "scripts": {
-    "start": "electron src/index.js"
+    "start": "electron src/index.js",
+    "build": "electron-builder"
+  },
+  "build": {
+    "appId": "com.aliger.app",
+    "productName": "Aliger",
+    "executableName": "Aliger",
+    "compression": "store",
+    "win": {
+      "target": "nsis",
+      "icon": "aliger.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "installerIcon": "aliger.ico",
+      "uninstallerIcon": "aliger.ico",
+      "uninstallDisplayName": "Aliger | Desinstalar",
+      "license": "license.md",
+      "allowToChangeInstallationDirectory": false
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "uuid": "^9.0.0"  
+  },
+  "devDependencies": {
     "electron": "^26.1.0",
-    "electron-reload": "^2.0.0-alpha.1",
-    "uuid": "^9.0.0"
+    "electron-builder": "^24.6.4",
+    "electron-reload": "^2.0.0-alpha.1"
   }
 }

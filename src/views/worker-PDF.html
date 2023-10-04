@@ -48,7 +48,6 @@ ipcRenderer.on("worker:printPDF", (event, content) => {
     cargarTodasLasImagenes(imagenes)
     .then(function() {
         ipcRenderer.send("worker:ready");
-        // Aquí puedes poner el código que deseas ejecutar después de que todas las imágenes se hayan cargado
     })
     .catch(function(error) {
         console.error(error);

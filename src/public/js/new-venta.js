@@ -1,9 +1,8 @@
-const path = require('path')
-const fs = require('fs');
+const { ipcRenderer } = require('electron')
 
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
-
-let {venta} = datos
+ipcRenderer.invoke('requestData').then((data)=>{
+    if (data) {
+        let {venta} = data
 
 
 
@@ -24,11 +23,18 @@ form.addEventListener('submit',(e)=>{
 
 
 
-        datos["venta"] = venta
+        data["venta"] = venta
 
-        const json_datos = JSON.stringify(datos)
-        fs.writeFileSync(path.join(__dirname,'../../data.json'), json_datos, 'utf-8')
+        const json_datos = JSON.stringify(data)
+        ipcRenderer.send('saveData',json_datos)
     
 
 
 })
+
+    }else{
+        alert('No hay data.json')
+    }
+})
+
+

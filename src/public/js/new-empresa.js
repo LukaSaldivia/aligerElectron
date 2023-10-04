@@ -1,30 +1,11 @@
-const path = require('path')
-const fs = require('fs');
+const { ipcRenderer } = require('electron');
 
-let datos = JSON.parse(fs.readFileSync(path.join(__dirname,'../../data.json')))
-
-let {empresa} = datos
-
-
-
-const idNuevaEmpresa = Math.max(...Object.keys(empresa).map(num => Number(num))) + 1 >= 0 ? Math.max(...Object.keys(empresa).map(num => Number(num))) + 1 : 0 
-
-
-
-
-
-
-
-function loadFile(event) {
-    var image = document.getElementById("imgMuestra");
-    image.src = URL.createObjectURL(event.target.files[0]);
-    image.onload = function() {
-        URL.revokeObjectURL(image.src)
-    }
-
-}
-
-const form = document.querySelector('#nueva-empresa')
+ipcRenderer.invoke('requestData').then((data)=>{
+    if (data) {
+        let {empresa} = data
+        console.log(empresa);
+        const idNuevaEmpresa = Math.max(...Object.keys(empresa).map(num => Number(num))) + 1 > 0 ? Math.max(...Object.keys(empresa).map(num => Number(num))) + 1 : 0 
+        const form = document.querySelector('#nueva-empresa')
 form.addEventListener('submit',(e)=>{
 
     e.preventDefault()
@@ -44,10 +25,11 @@ form.addEventListener('submit',(e)=>{
 
 
 
-        datos["empresa"] = empresa
+        data["empresa"] = empresa
 
-        const json_datos = JSON.stringify(datos)
-        fs.writeFileSync(path.join(__dirname,'../../data.json'), json_datos, 'utf-8')
+        const json_datos = JSON.stringify(data)
+        
+        ipcRenderer.send('saveData',json_datos)
     
     }
 
@@ -58,3 +40,24 @@ form.addEventListener('submit',(e)=>{
 
 
 })
+
+
+
+
+    }else{
+        alert('No hay data.json')
+    }
+})
+
+
+
+
+function loadFile(event) {
+    var image = document.getElementById("imgMuestra");
+    image.src = URL.createObjectURL(event.target.files[0]);
+    image.onload = function() {
+        URL.revokeObjectURL(image.src)
+    }
+
+}
+
